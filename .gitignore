@@ -16,3 +16,6 @@ shot-*.png
 .vscode/
 .idea/
 *.tsbuildinfo
+
+# scratch directory used by npm pack checks
+.tmp/
