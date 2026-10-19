@@ -257,10 +257,16 @@ scripts/        sample generator, static server for the built demo
 The demo is fully static and needs no server:
 
 ```sh
-npm run build:demo
+npm run build:demo   # → dist-demo/
 ```
 
-Upload `dist-demo/` to GitHub Pages, Netlify, or any static host. `?sample` opens the bundled model directly, which is handy for screenshots and demos.
+Upload `dist-demo/` to any static host. The included workflow (`.github/workflows/pages.yml`) does it for GitHub Pages on every push to `main`:
+
+1. **Settings → Pages → Source** → *GitHub Actions*
+2. Push to `main`
+3. The demo is published to `https://<user>.github.io/<repo>/`
+
+`?sample` opens the bundled model directly, which is handy for screenshots, demos and README links.
 
 ## License
 
