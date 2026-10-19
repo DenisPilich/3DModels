@@ -5,16 +5,16 @@
 ![glb-doctor: a checkerboard cube, a copper sphere and a gradient torus next to a report with an 86/100 health score, three findings and a byte breakdown](docs/screenshot.png)
 
 [![npm version](https://img.shields.io/npm/v/glb-doctor?color=34d399)](https://www.npmjs.com/package/glb-doctor)
+[![CI](https://github.com/DenisPilich/3DModels/actions/workflows/ci.yml/badge.svg)](https://github.com/DenisPilich/3DModels/actions/workflows/ci.yml)
 ![zero dependencies](https://img.shields.io/badge/runtime%20dependencies-0-34d399)
 ![bundle size](https://img.shields.io/badge/bundle-7.2%20kB%20gzip-34d399)
-![tests](https://img.shields.io/badge/tests-53-34d399)
 ![license](https://img.shields.io/badge/license-MIT-3b82f6)
 
 glb-doctor reads a binary glTF file and explains what it contains and what it costs: triangles, draw calls, texture sizes, where the megabytes went, and the handful of mistakes that cause most slow 3D on the web.
 
 It is **7.2 kB gzipped, has zero runtime dependencies, and runs in the browser and in Node**. No WASM, no workers, no upload, no build step.
 
-**[npm](https://www.npmjs.com/package/glb-doctor)** · **[source](https://github.com/DenisPilich/3DModels)** · `npm install glb-doctor`
+**[Live demo](https://denispilich.github.io/3DModels/?sample)** · **[npm](https://www.npmjs.com/package/glb-doctor)** · **[source](https://github.com/DenisPilich/3DModels)** · `npm install glb-doctor`
 
 ```ts
 import { diagnose } from 'glb-doctor'
