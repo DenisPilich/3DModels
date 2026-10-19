@@ -1,0 +1,18 @@
+node_modules/
+dist/
+dist-demo/
+coverage/
+
+# local caches kept inside the project (see .npmrc)
+.pnpm-store/
+.npm-cache/
+
+# local browser profile used for headless screenshots
+.chrome-profile/
+shot-*.png
+
+*.log
+.DS_Store
+.vscode/
+.idea/
+*.tsbuildinfo
