@@ -6,7 +6,7 @@
 
 ![zero dependencies](https://img.shields.io/badge/runtime%20dependencies-0-34d399)
 ![bundle size](https://img.shields.io/badge/bundle-7.2%20kB%20gzip-34d399)
-![tests](https://img.shields.io/badge/tests-41-34d399)
+![tests](https://img.shields.io/badge/tests-53-34d399)
 ![license](https://img.shields.io/badge/license-MIT-3b82f6)
 
 glb-doctor reads a binary glTF file and explains what it contains and what it costs: triangles, draw calls, texture sizes, where the megabytes went, and the handful of mistakes that cause most slow 3D on the web.
@@ -38,7 +38,7 @@ The existing options are good, but they are not what you reach for in a browser 
 - `gltf-transform` is a powerful Node CLI and library. It is not 7 kB, and it is built to rewrite assets.
 - Devtools tell you about draw calls after the page is already slow.
 
-glb-doctor answers a narrower question — *what is in this file and what is wrong with it* — in a few milliseconds, on the client, without touching the asset. That narrowness is the point: the API is four functions, the output is plain data, and the whole thing fits in a single request.
+glb-doctor answers a narrower question — *what is in this file and what is wrong with it* — in a few milliseconds, on the client, without touching the asset. That narrowness is the point: the library API is four functions, the output is plain data, and the whole thing fits in a single request.
 
 ## Install
 
@@ -99,6 +99,63 @@ const report = analyze(file, { maxTextureSize: 1024 })
 | `maxDrawCalls` | `100` | Flag scenes with more primitives than this |
 | `maxFileSizeMB` | `10` | Flag containers larger than this |
 | `maxTextureMB` | `2` | Flag single images larger than this |
+
+## CLI
+
+The same analysis is available as a command, for asset pipelines and for looking at a file without opening a browser:
+
+```sh
+npx glb-doctor model.glb
+```
+
+```text
+model.glb  526 KB · glTF 2.0 · glb-doctor sample generator
+
+  Health  86/100  B  █████████████████░░░  Mostly clean
+
+  Scene   9,228 triangles · 4,842 vertices · 3 draw calls
+          3 materials · 2 textures · 3 nodes
+
+  Size    geometry    205 KB  ████████░░░░░░░░░░░░  39%
+          textures    318 KB  ████████████░░░░░░░░  60%
+          other       3.4 KB  ░░░░░░░░░░░░░░░░░░░░   1%
+
+  1 warning · 2 notes
+    !  1 texture larger than 2048px
+       3000×1500 (gradient). Most of that detail is invisible at typical viewing distance;
+       1024–2048px is usually enough.
+    i  Geometry is not compressed
+       Draco or meshopt can shrink vertex data by 50–90% on typical models. Usually applied at
+       export time.
+```
+
+| Option | Effect |
+| --- | --- |
+| `--json` | Print the raw report instead of the formatted one |
+| `--quiet` | Hide informational notes |
+| `--fail-on <level>` | Exit with code 2 when a finding reaches `info`, `warning` or `critical` |
+| `--no-color` | Disable ANSI colours (also honours `NO_COLOR`) |
+| `-h`, `--help` | Usage |
+| `-v`, `--version` | Version |
+
+Several files at once, and stdin, both work:
+
+```sh
+glb-doctor public/*.glb
+cat model.glb | glb-doctor -
+```
+
+Because `--fail-on` maps findings to an exit code, the CLI doubles as an asset budget in CI:
+
+```yaml
+- run: npx glb-doctor public/models/*.glb --fail-on warning
+```
+
+| Exit code | Meaning |
+| --- | --- |
+| `0` | Nothing to report at the requested level |
+| `1` | A file could not be read or parsed |
+| `2` | Findings reached the `--fail-on` level |
 
 ## What it checks
 
@@ -162,9 +219,10 @@ Every warning carries a human-readable `title` and `detail`, so a UI can render 
 ```sh
 npm install
 npm run dev          # demo on http://localhost:5173
-npm test             # 41 tests, vitest
+npm test             # 53 tests, vitest
 npm run typecheck    # tsc --noEmit
-npm run build        # library → dist/ (ESM + CJS + d.ts)
+npm run build        # library + CLI → dist/ (ESM, CJS, d.ts, bin)
+npm run cli -- public/sample.glb   # run the built CLI
 npm run build:demo   # static demo → dist-demo/
 npm run sample       # regenerate public/sample.glb from scripts/make-sample.mjs
 ```
@@ -178,8 +236,9 @@ src/
   glb.ts        container parsing and validation
   image.ts      image header sniffing
   analyze.ts    scene stats, byte accounting, warnings, score
+  cli.ts        argument parsing, terminal rendering, exit codes
   types.ts      glTF data model
-test/           unit tests + an integration test against the generated sample
+test/           unit tests, CLI tests, and an integration test against the sample
 demo/           the browser demo (three.js viewer, no framework)
 scripts/        sample generator, static server for the built demo
 ```

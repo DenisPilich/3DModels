@@ -27,5 +27,10 @@ jobs:
       - name: Build library
         run: npm run build
 
+      - name: CLI smoke test
+        run: |
+          node dist/cli.js --version
+          node dist/cli.js public/sample.glb --fail-on critical
+
       - name: Build demo
         run: npm run build:demo
