@@ -19,3 +19,5 @@ shot-*.png
 
 # scratch directory used by npm pack checks
 .tmp/
+# scratch directories (headless browser profiles, screenshots)
+.tmp-*/
