@@ -41,12 +41,16 @@ jobs:
       # prepublishOnly runs typecheck, tests and a build once more, so a broken
       # commit can never reach the registry, whatever the tag says.
       #
+      # The trusted publisher grants "npm stage publish" only: CI can prepare a
+      # release but never ship it. A maintainer approves it with 2FA, which is
+      # the flow npm recommends instead of long-lived publish tokens.
+      #
       # npm errors are surfaced as annotations too: the job log is only visible
       # to signed-in users, while annotations are readable through the API.
-      - name: Publish
+      - name: Stage the release
         run: |
           set +e
-          npm publish --provenance --access public > publish.log 2>&1
+          npm stage publish --provenance --access public > publish.log 2>&1
           status=$?
           cat publish.log
           if [ "$status" -ne 0 ]; then
@@ -55,3 +59,8 @@ jobs:
             done < <(tail -n 12 publish.log)
           fi
           exit "$status"
+
+      - name: Where to approve
+        if: success()
+        run: |
+          echo "::notice::Staged, not published. Approve it with 2FA: https://www.npmjs.com/package/glb-doctor (Staged releases), or run: npm stage approve <id>"

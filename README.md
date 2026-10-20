@@ -262,14 +262,16 @@ npm run build:demo   # → dist-demo/
 
 `.github/workflows/ci.yml` runs on every push and pull request: type check, tests, library and CLI build, a CLI smoke test, and the demo build. On `main` the `deploy` job starts only after the `test` job is green, so a broken build can never reach the site. Pages has to be enabled once in **Settings → Pages → Source** → *GitHub Actions*.
 
-Releases are tag-driven:
+Releases are tag-driven and two-phase:
 
 ```sh
 npm version patch        # or minor / major: bumps package.json and creates a tag
 git push --follow-tags   # triggers .github/workflows/publish.yml
 ```
 
-The publish workflow checks that the tag matches `package.json`, builds, and runs `npm publish --provenance`. It authenticates with npm's [trusted publishing](https://docs.npmjs.com/trusted-publishers) — a short-lived OIDC credential exchanged for a publish grant — so there is no token and no secret to rotate. The publisher is configured once on npmjs.com: **package settings → Trusted publishing → GitHub Actions**, with `DenisPilich/3DModels` and workflow file `publish.yml`.
+The workflow checks that the tag matches `package.json`, builds, tests, and stages the release with `npm stage publish --provenance`. It authenticates through [trusted publishing](https://docs.npmjs.com/trusted-publishers) — a short-lived OIDC credential — so the repository holds no token and no secret. The trusted publisher is configured once in **package settings → Trusted publishing** with the `npm stage publish` permission, the repository `DenisPilich/3DModels` and the workflow file `publish.yml`.
+
+Staging is not publishing: the version stays invisible until a maintainer approves it with 2FA — on npmjs.com under *Staged releases*, or from a terminal with `npm stage approve <id>`. That human step is deliberate, and it is the flow npm recommends now that publish tokens are being retired.
 
 `?sample` opens the bundled model directly, which is handy for screenshots, demos and README links.
 
