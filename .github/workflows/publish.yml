@@ -35,7 +35,20 @@ jobs:
 
       # prepublishOnly runs typecheck, tests and a build once more, so a broken
       # commit can never reach the registry, whatever the tag says.
+      #
+      # npm errors are surfaced as annotations too: the job log is only visible
+      # to signed-in users, while annotations are readable through the API.
       - name: Publish
-        run: npm publish --provenance --access public
+        run: |
+          set +e
+          npm publish --provenance --access public > publish.log 2>&1
+          status=$?
+          cat publish.log
+          if [ "$status" -ne 0 ]; then
+            while IFS= read -r line; do
+              echo "::error::$line"
+            done < <(tail -n 12 publish.log)
+          fi
+          exit "$status"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
