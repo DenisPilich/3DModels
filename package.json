@@ -7,11 +7,11 @@
   "author": "Denis Pilich",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DenisPilich/3DModels.git"
+    "url": "git+https://github.com/DenisPilich/glb-doctor.git"
   },
-  "homepage": "https://github.com/DenisPilich/3DModels#readme",
+  "homepage": "https://github.com/DenisPilich/glb-doctor#readme",
   "bugs": {
-    "url": "https://github.com/DenisPilich/3DModels/issues"
+    "url": "https://github.com/DenisPilich/glb-doctor/issues"
   },
   "engines": {
     "node": ">=18"

@@ -5,7 +5,7 @@
 ![glb-doctor: a checkerboard cube, a copper sphere and a gradient torus next to a report with an 86/100 health score, three findings and a byte breakdown](docs/screenshot.png)
 
 [![npm version](https://img.shields.io/npm/v/glb-doctor?color=34d399)](https://www.npmjs.com/package/glb-doctor)
-[![CI](https://github.com/DenisPilich/3DModels/actions/workflows/ci.yml/badge.svg)](https://github.com/DenisPilich/3DModels/actions/workflows/ci.yml)
+[![CI](https://github.com/DenisPilich/glb-doctor/actions/workflows/ci.yml/badge.svg)](https://github.com/DenisPilich/glb-doctor/actions/workflows/ci.yml)
 ![zero dependencies](https://img.shields.io/badge/runtime%20dependencies-0-34d399)
 ![bundle size](https://img.shields.io/badge/bundle-7.2%20kB%20gzip-34d399)
 ![license](https://img.shields.io/badge/license-MIT-3b82f6)
@@ -14,7 +14,7 @@ glb-doctor reads a binary glTF file and explains what it contains and what it co
 
 It is **7.2 kB gzipped, has zero runtime dependencies, and runs in the browser and in Node**. No WASM, no workers, no upload, no build step.
 
-**[Live demo](https://denispilich.github.io/3DModels/?sample)** · **[npm](https://www.npmjs.com/package/glb-doctor)** · **[source](https://github.com/DenisPilich/3DModels)** · `npm install glb-doctor`
+**[Live demo](https://denispilich.github.io/glb-doctor/?sample)** · **[npm](https://www.npmjs.com/package/glb-doctor)** · **[source](https://github.com/DenisPilich/glb-doctor)** · `npm install glb-doctor`
 
 ```ts
 import { diagnose } from 'glb-doctor'
@@ -269,7 +269,7 @@ npm version patch        # or minor / major: bumps package.json and creates a ta
 git push --follow-tags   # triggers .github/workflows/publish.yml
 ```
 
-The workflow checks that the tag matches `package.json`, builds, tests, and stages the release with `npm stage publish --provenance`. It authenticates through [trusted publishing](https://docs.npmjs.com/trusted-publishers) — a short-lived OIDC credential — so the repository holds no token and no secret. The trusted publisher is configured once in **package settings → Trusted publishing** with the `npm stage publish` permission, the repository `DenisPilich/3DModels` and the workflow file `publish.yml`.
+The workflow checks that the tag matches `package.json`, builds, tests, and stages the release with `npm stage publish --provenance`. It authenticates through [trusted publishing](https://docs.npmjs.com/trusted-publishers) — a short-lived OIDC credential — so the repository holds no token and no secret. The trusted publisher is configured once in **package settings → Trusted publishing** with the `npm stage publish` permission, the repository `DenisPilich/glb-doctor` and the workflow file `publish.yml`.
 
 Staging is not publishing: the version stays invisible until a maintainer approves it with 2FA — on npmjs.com under *Staged releases*, or from a terminal with `npm stage approve <id>`. That human step is deliberate, and it is the flow npm recommends now that publish tokens are being retired.
 
