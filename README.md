@@ -252,19 +252,24 @@ demo/           the browser demo (three.js viewer, no framework)
 scripts/        sample generator, static server for the built demo
 ```
 
-## Deploying the demo
+## Deployment and releases
 
-The demo is fully static and needs no server:
+The demo is fully static:
 
 ```sh
 npm run build:demo   # → dist-demo/
 ```
 
-Upload `dist-demo/` to any static host. The included workflow (`.github/workflows/pages.yml`) does it for GitHub Pages on every push to `main`:
+`.github/workflows/ci.yml` runs on every push and pull request: type check, tests, library and CLI build, a CLI smoke test, and the demo build. On `main` the `deploy` job starts only after the `test` job is green, so a broken build can never reach the site. Pages has to be enabled once in **Settings → Pages → Source** → *GitHub Actions*.
 
-1. **Settings → Pages → Source** → *GitHub Actions*
-2. Push to `main`
-3. The demo is published to `https://<user>.github.io/<repo>/`
+Releases are tag-driven:
+
+```sh
+npm version patch        # or minor / major: bumps package.json and creates a tag
+git push --follow-tags   # triggers .github/workflows/publish.yml
+```
+
+The publish workflow checks that the tag matches `package.json`, builds, and runs `npm publish --provenance`. It needs one repository secret, `NPM_TOKEN` — an npm automation token with publish rights — under **Settings → Secrets and variables → Actions**.
 
 `?sample` opens the bundled model directly, which is handy for screenshots, demos and README links.
 

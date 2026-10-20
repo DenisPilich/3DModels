@@ -4,9 +4,21 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  check:
+  # Everything that can break: types, tests, the library build, the CLI and the
+  # demo. The deploy job below only starts if this one is green.
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,7 +36,7 @@ jobs:
       - name: Tests
         run: npm test
 
-      - name: Build library
+      - name: Build library and CLI
         run: npm run build
 
       - name: CLI smoke test
@@ -32,5 +44,26 @@ jobs:
           node dist/cli.js --version
           node dist/cli.js public/sample.glb --fail-on critical
 
-      - name: Build demo
+      - name: Build the demo
         run: npm run build:demo
+
+      - name: Configure Pages
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+
+      - name: Upload the demo
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-demo
+
+  deploy:
+    needs: test
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

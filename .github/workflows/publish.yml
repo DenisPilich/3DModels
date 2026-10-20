@@ -1,0 +1,41 @@
+name: Publish
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - run: npm ci
+
+      - name: Check the tag matches the package version
+        run: |
+          expected="v$(node -p "require('./package.json').version")"
+          if [ "$expected" != "${GITHUB_REF_NAME}" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match package version ${expected}" >&2
+            exit 1
+          fi
+
+      - name: Build
+        run: npm run build
+
+      # prepublishOnly runs typecheck, tests and a build once more, so a broken
+      # commit can never reach the registry, whatever the tag says.
+      - name: Publish
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
