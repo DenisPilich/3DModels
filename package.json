@@ -1,6 +1,6 @@
 {
   "name": "glb-doctor",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Diagnose glTF/GLB files: scene stats, texture sizes, wasted bytes and actionable warnings. Zero dependencies, works in the browser and in Node.",
   "type": "module",
   "license": "MIT",
