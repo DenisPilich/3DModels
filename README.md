@@ -269,7 +269,7 @@ npm version patch        # or minor / major: bumps package.json and creates a ta
 git push --follow-tags   # triggers .github/workflows/publish.yml
 ```
 
-The publish workflow checks that the tag matches `package.json`, builds, and runs `npm publish --provenance`. It needs one repository secret, `NPM_TOKEN` — an npm automation token with publish rights — under **Settings → Secrets and variables → Actions**.
+The publish workflow checks that the tag matches `package.json`, builds, and runs `npm publish --provenance`. It authenticates with npm's [trusted publishing](https://docs.npmjs.com/trusted-publishers) — a short-lived OIDC credential exchanged for a publish grant — so there is no token and no secret to rotate. The publisher is configured once on npmjs.com: **package settings → Trusted publishing → GitHub Actions**, with `DenisPilich/3DModels` and workflow file `publish.yml`.
 
 `?sample` opens the bundled model directly, which is handy for screenshots, demos and README links.
 
